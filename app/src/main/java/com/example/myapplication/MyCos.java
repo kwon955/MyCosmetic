@@ -30,7 +30,11 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.storage.FirebaseStorage;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class MyCos extends AppCompatActivity {
@@ -74,10 +78,8 @@ public class MyCos extends AppCompatActivity {
         database.getReference().child("images").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-
                 imageDTOs.clear();
                 uidLists.clear();
-
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     ImageDTO imageDTO = snapshot.getValue(ImageDTO.class);
                     String uidKey = snapshot.getKey();
@@ -86,7 +88,6 @@ public class MyCos extends AppCompatActivity {
                 }
                 mycosrecycle.notifyDataSetChanged();
             }
-
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
@@ -118,6 +119,14 @@ public class MyCos extends AppCompatActivity {
 
     class MycosrecycleviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+        String get_date(String b,String a) throws ParseException{
+            DateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+            Date today = new Date(sdf.parse(b).getTime());
+            Date date = new Date(sdf.parse(a).getTime());
+            long diff = today.getTime() - date.getTime();
+            diff = diff / (24 * 60 * 60 * 1000);
+            return String.valueOf(diff);
+        }
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
@@ -134,6 +143,11 @@ public class MyCos extends AppCompatActivity {
             ((CustomViewHolder) holder).textView3.setText(imageDTOs.get(position).sellbydate);
             ((CustomViewHolder) holder).textView4.setText(imageDTOs.get(position).memo);
             ((CustomViewHolder) holder).textView5.setText(imageDTOs.get(position).open);
+            try {
+                ((CustomViewHolder) holder).textView6.setText("D-Day : "+get_date(imageDTOs.get(position).sellbydate,imageDTOs.get(position).open));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
 
             Glide.with(holder.itemView.getContext()).load(imageDTOs.get(position).imageUrl).into(((CustomViewHolder) holder).imageView);
             ((CustomViewHolder) holder).starButton.setOnClickListener(new View.OnClickListener() {
@@ -222,13 +236,7 @@ public class MyCos extends AppCompatActivity {
 
                 }
             });
-
-
-
-
             }
-
-
 
         private class CustomViewHolder extends RecyclerView.ViewHolder {
             ImageView imageView;
@@ -237,6 +245,7 @@ public class MyCos extends AppCompatActivity {
             TextView textView3;
             TextView textView4;
             TextView textView5;
+            TextView textView6;
 
             ImageView starButton;
             ImageView deleteButton;
@@ -249,6 +258,7 @@ public class MyCos extends AppCompatActivity {
                 textView3 = (TextView) view.findViewById(R.id.item_textview3);
                 textView4 = (TextView) view.findViewById(R.id.item_textView4);
                 textView5 = (TextView) view.findViewById(R.id.item_textView5);
+                textView6 = (TextView) view.findViewById(R.id.item_textView6);
 
                 starButton = (ImageView) view.findViewById(R.id.starbutton_imageView);
                 deleteButton = (ImageView) view.findViewById(R.id.item_delete);

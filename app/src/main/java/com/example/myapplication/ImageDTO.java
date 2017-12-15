@@ -20,6 +20,7 @@ public class ImageDTO {
     public String open;
     public String sellbydate;
     public String imageName;
+    public String diff;
 
     public int starCount = 0;
     public Map<String, Boolean> stars = new HashMap<>();

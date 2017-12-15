@@ -44,6 +44,10 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 
 import java.io.File;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class ToolbarActivity1 extends AppCompatActivity {
     private static final int GALLERY_CODE = 10;
@@ -207,16 +211,15 @@ public class ToolbarActivity1 extends AppCompatActivity {
                 imageDTO.uid = auth.getCurrentUser().getUid();
                 imageDTO.userId = auth.getCurrentUser().getEmail();
                 imageDTO.imageName = file.getLastPathSegment();
-
                 database.getReference().child("images").push().setValue(imageDTO);
-
             }
         });
     }
+    String get_date(String a,String b) throws ParseException {
+        DateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+        Date today = new Date(sdf.parse(b).getTime());
+        Date date = new Date(sdf.parse(a).getTime());
+        int diff = today.getDate() - date.getDate();
+        return String.valueOf(diff);
+    }
 }
-
-
-
-
-
-
